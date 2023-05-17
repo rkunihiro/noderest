@@ -1,0 +1,35 @@
+{
+    "name": "noderest",
+    "version": "1.0.0",
+    "description": "",
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "main": "dist/main.cjs",
+    "module": "dist/main.mjs",
+    "source": "src/main.ts",
+    "type": "commonjs",
+    "dependencies": {
+        "@apollo/client": "^3.7.14",
+        "@aws-sdk/client-kms": "^3.334.0",
+        "axios": "^1.4.0",
+        "fastify": "^4.17.0",
+        "ioredis": "^5.3.2",
+        "mysql2": "^3.3.1",
+        "pino": "^8.14.1"
+    },
+    "devDependencies": {
+        "@types/k6": "^0.44.1",
+        "@types/node": "^20.1.7",
+        "nodemon": "^2.0.22",
+        "parcel": "^2.8.3",
+        "prettier": "^2.8.8",
+        "ts-node": "^10.9.1",
+        "typescript": "^5.0.4"
+    },
+    "scripts": {
+        "dev": "nodemon --watch src --ext ts --exec ts-node src/main.ts",
+        "build": "parcel build",
+        "start": "node dist/main.cjs"
+    }
+}
