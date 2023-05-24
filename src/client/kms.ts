@@ -1,5 +1,8 @@
 import { DecryptCommand, EncryptCommand, KMSClient } from "@aws-sdk/client-kms";
 
+const endpoint = process.env["AWS_ENDPOINT"] ?? "http://localhost:4566";
+const region = "ap-northeast-1";
+
 class KMS {
     private readonly client: KMSClient;
 
@@ -7,7 +10,8 @@ class KMS {
 
     constructor(keyId: string) {
         this.client = new KMSClient({
-            endpoint: "http://localhost:4566",
+            endpoint,
+            region,
         });
         this.keyId = keyId;
     }

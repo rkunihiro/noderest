@@ -1,11 +1,15 @@
 import { GetObjectCommand, PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 
+const endpoint = process.env["AWS_ENDPOINT"] ?? "http://localhost:4566";
+const region = "ap-northeast-1";
+
 class S3 {
     private readonly client: S3Client;
 
     constructor() {
         this.client = new S3Client({
-            endpoint: "http://localhost:4566",
+            endpoint,
+            region,
             forcePathStyle: true,
         });
     }

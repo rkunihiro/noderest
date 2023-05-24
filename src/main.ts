@@ -5,7 +5,7 @@ import { server } from "./server";
 
 export async function main() {
     const url = await server.listen({
-        host: "localhost",
+        host: "0.0.0.0",
         port: 3000,
     });
     logger.info(`Server start ${url}`);

@@ -1,8 +1,8 @@
 import { Redis } from "ioredis";
 
-const uri = "redis://localhost:6379";
+const endpoint = process.env["REDIS_ENDPOINT"] ?? "redis://localhost:6379";
 
-export const redis = new Redis(uri, {
+export const redis = new Redis(endpoint, {
     retryStrategy(times) {
         return Math.min(times * 50, 2000);
     },
@@ -12,4 +12,5 @@ export const redis = new Redis(uri, {
         return false;
     },
     connectTimeout: 5000,
+    lazyConnect: true,
 });

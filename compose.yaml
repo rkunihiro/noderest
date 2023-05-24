@@ -19,6 +19,12 @@ services:
     volumes:
       - ./docker/db/conf:/etc/mysql/conf.d:ro
       - ./docker/db/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD", "mysql", "-u", "username", "-ppassword", "dbname"]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+      start_period: 10s
     platform: linux/amd64
 
   # https://hub.docker.com/_/redis
@@ -32,6 +38,13 @@ services:
       - default
     ports:
       - 6379:6379
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+      start_period: 10s
+    # platform: linux/amd64
 
   # https://hub.docker.com/r/localstack/localstack
   localstack:
@@ -56,7 +69,53 @@ services:
       - ./docker/localstack/init:/etc/localstack/init/ready.d
       - ./docker/localstack/keys:/app/keys
       - ./docker/localstack/data:/app/data
+    healthcheck:
+      test: ["CMD", "awslocal", "s3", "ls", "s3://test-bucket"]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+      start_period: 10s
     # platform: linux/amd64
+
+  # https://hub.docker.com/_/node
+  node:
+    container_name: container-node
+    image: node:18.16.0-bullseye-slim
+    depends_on:
+      db:
+        condition: service_healthy
+      localstack:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      LANG: C.UTF-8
+      TZ: UTC
+      NODE_ENV: development
+      # AWS config
+      AWS_ACCESS_KEY_ID: dummy
+      AWS_SECRET_ACCESS_KEY: dummy
+      AWS_DEFAULT_REGION: ap-northeast-1
+      AWS_REGION: ap-northeast-1
+      # Application config
+      AWS_ENDPOINT: "http://localstack:4566"
+      DB_ENDPOINT: "mysql://username:password@db:3306/dbname"
+      REDIS_ENDPOINT: "redis://redis:6379"
+      S3_BUCKET_NAME: "test-bucket"
+    networks:
+      - default
+    ports:
+      - 3000:3000
+    volumes:
+      - .:/app
+    working_dir: /app
+    command: ["npm", "run", "dev"]
+    # platform: linux/amd64
+    deploy:
+      resources:
+        limits:
+          cpus: "0.25"
+          memory: 1024M
 
   # https://hub.docker.com/r/grafana/k6
   k6:
@@ -65,7 +124,8 @@ services:
     environment:
       LANG: C.UTF-8
       TZ: UTC
-      BASE_URL: http://host.docker.internal:3000
+      # BASE_URL: http://host.docker.internal:3000
+      BASE_URL: http://node:3000
     networks:
       - default
     volumes:
@@ -73,6 +133,8 @@ services:
     working_dir: /k6
     command: ["--version"]
     # platform: linux/amd64
+    profiles:
+      - test
 
 networks:
   default:

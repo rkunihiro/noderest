@@ -1,11 +1,13 @@
 import { createPool, type Pool, type RowDataPacket } from "mysql2/promise";
 
+const uri = process.env["DB_ENDPOINT"] ?? "mysql://username:password@localhost:3306/dbname";
+
 class Client {
     private readonly pool: Pool;
 
     constructor() {
         this.pool = createPool({
-            uri: "mysql://username:password@localhost:3306/dbname",
+            uri,
         });
     }
 
