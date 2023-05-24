@@ -42,7 +42,7 @@ services:
       TZ: UTC
       # https://docs.localstack.cloud/references/configuration/
       EAGER_SERVICE_LOADING: 1
-      SERVICES: kms
+      SERVICES: kms, s3
       # https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-envvars.html
       AWS_ACCESS_KEY_ID: dummy
       AWS_SECRET_ACCESS_KEY: dummy
@@ -55,6 +55,7 @@ services:
     volumes:
       - ./docker/localstack/init:/etc/localstack/init/ready.d
       - ./docker/localstack/keys:/app/keys
+      - ./docker/localstack/data:/app/data
     # platform: linux/amd64
 
   # https://hub.docker.com/r/grafana/k6

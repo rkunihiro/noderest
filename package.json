@@ -12,6 +12,7 @@
     "dependencies": {
         "@apollo/client": "^3.7.14",
         "@aws-sdk/client-kms": "^3.338.0",
+        "@aws-sdk/client-s3": "^3.338.0",
         "axios": "^1.4.0",
         "fastify": "^4.17.0",
         "ioredis": "^5.3.2",
